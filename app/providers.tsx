@@ -4,20 +4,10 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Toaster, resolveValue } from "react-hot-toast";
 import { useMediaQuery } from "usehooks-ts";
-import useEventsStore from "@/store/useEventsStore";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-    const { resetSidebar, resetMobileNavigation } = useEventsStore();
     const pathname = usePathname();
     const desktop = useMediaQuery("(min-width: 1260px)");
-
-    useEffect(() => {
-        resetSidebar();
-    }, [pathname, resetSidebar, desktop]);
-
-    useEffect(() => {
-        resetMobileNavigation();
-    }, [pathname, resetMobileNavigation]);
 
     return (
         <>

@@ -1,8 +1,7 @@
 import type { NextPage } from "next";
-import ExploreScreen from "@/screens/ExploreScreen";
 
 const Explore: NextPage = () => {
-    return <ExploreScreen />;
+    return <div>Explore page coming soon</div>;
 };
 
 export default Explore;

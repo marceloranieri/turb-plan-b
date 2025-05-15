@@ -1,7 +1,7 @@
 import TopicScreen from "@/screens/TopicScreen";
 
 const Topic = ({ params }: { params: { id: string } }) => {
-    return <TopicScreen topicId={params.id} />;
+    return <div>Topic page {params.id} coming soon</div>;
 };
 
 export default Topic;

@@ -1,8 +1,7 @@
 import type { NextPage } from "next";
-import EntryScreen from "@/screens/EntryScreen";
 
 const Entry: NextPage = () => {
-    return <EntryScreen />;
+    return <div>Entry page coming soon</div>;
 };
 
 export default Entry;

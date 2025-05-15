@@ -1,8 +1,7 @@
 import type { NextPage } from "next";
-import BookmarksScreen from "@/screens/BookmarksScreen";
 
 const Bookmarks: NextPage = () => {
-    return <BookmarksScreen />;
+    return <div>Bookmarks page coming soon</div>;
 };
 
 export default Bookmarks;
