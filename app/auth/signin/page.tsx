@@ -1,65 +1,38 @@
 "use client";
 
 import type { NextPage } from "next";
-import { createBrowserClient } from '@supabase/ssr';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 
 // Create a client component that uses useSearchParams
 function SignInContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClientComponentClient();
     
-    // Get the redirectTo parameter or default to dashboard
+    // Get the redirectTo parameter (if any)
     const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
 
-    useEffect(() => {
-        // Log URL parameters
-        console.log('Sign-in page loaded with params:', Object.fromEntries([...searchParams.entries()]));
-        
-        // Check if user is already authenticated
-        const checkSession = async () => {
-            const { data } = await supabase.auth.getSession();
-            console.log('Current session state:', {
-                hasSession: !!data.session,
-                user: data.session?.user?.email || 'none'
-            });
-        };
-        
-        checkSession();
-    }, [searchParams, supabase.auth]);
-
     const handleGoogleSignIn = async () => {
-        console.log('Starting Google sign in...', {
-            redirectTo,
-            siteUrl: process.env.NEXT_PUBLIC_SITE_URL
-        });
-        
+        console.log('Starting Google sign in...');
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL + 
-                    `?redirectTo=${encodeURIComponent(redirectTo)}`,
+                // Use the configured redirect URL in Supabase
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}${redirectTo}`
             },
         });
     };
 
     const handleFacebookSignIn = async () => {
-        console.log('Starting Facebook sign in...', {
-            redirectTo,
-            siteUrl: process.env.NEXT_PUBLIC_SITE_URL
-        });
-        
+        console.log('Starting Facebook sign in...');
         await supabase.auth.signInWithOAuth({
             provider: "facebook",
             options: {
-                redirectTo: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL + 
-                    `?redirectTo=${encodeURIComponent(redirectTo)}`,
+                // Use the configured redirect URL in Supabase
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}${redirectTo}`
             },
         });
     };
