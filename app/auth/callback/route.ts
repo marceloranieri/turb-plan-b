@@ -6,18 +6,24 @@ export async function GET(request: Request) {
     const requestUrl = new URL(request.url);
     const code = requestUrl.searchParams.get("code");
 
-    if (code) {
-        const cookieStore = cookies();
-        const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    if (!code) {
+        return NextResponse.redirect(new URL("/auth/signin", requestUrl.origin));
+    }
+
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    
+    try {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
         
-        try {
-            await supabase.auth.exchangeCodeForSession(code);
-        } catch (error) {
+        if (error) {
             console.error('Error exchanging code for session:', error);
             return NextResponse.redirect(new URL("/auth/signin", requestUrl.origin));
         }
-    }
 
-    // Redirect to the callback page which will handle the client-side session check
-    return NextResponse.redirect(new URL("/auth/callback", requestUrl.origin));
+        return NextResponse.redirect(new URL("/", requestUrl.origin));
+    } catch (error) {
+        console.error('Unexpected error during auth callback:', error);
+        return NextResponse.redirect(new URL("/auth/signin", requestUrl.origin));
+    }
 } 
