@@ -1,47 +1,59 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { createServerClient } from '@supabase/ssr';
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
-  // Refresh session if exists
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // Auth pages are accessible without session
-  if (req.nextUrl.pathname.startsWith('/auth')) {
-    // If user is already authenticated and tries to access auth pages,
-    // redirect them to the home page
-    if (session) {
-      return NextResponse.redirect(new URL('/', req.url))
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name, value, options) {
+          request.cookies.set({ name, value, ...options });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name, options) {
+          request.cookies.set({ name, value: '', ...options });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({ name, value: '', ...options });
+        },
+      },
     }
-    return res
-  }
+  );
 
-  // Redirect to login if no session and trying to access protected routes
-  if (!session) {
-    const redirectUrl = new URL('/auth/signin', req.url)
-    // Preserve the original URL as a query parameter
-    redirectUrl.searchParams.set('redirectTo', req.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
-  }
+  // Refresh session if expired - required for Server Components
+  await supabase.auth.getSession();
 
-  return res
+  return response;
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
+     * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder
-     * - public files
+     * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
-} 
+}; 
