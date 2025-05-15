@@ -2,27 +2,47 @@
 
 import type { NextPage } from "next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 const SignIn: NextPage = () => {
     const router = useRouter();
-    const supabase = createClientComponentClient();
+    const searchParams = useSearchParams();
+    const supabase = createClientComponentClient({
+        cookieOptions: {
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        }
+    });
+    
+    // Get the redirectTo parameter or default to dashboard
+    const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+    const encodedRedirectTo = encodeURIComponent(redirectTo);
 
     const handleGoogleSignIn = async () => {
+        console.log('Starting Google sign in...', {
+            siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+            redirectTo: encodedRedirectTo
+        });
+        
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodedRedirectTo}`,
             },
         });
     };
 
     const handleFacebookSignIn = async () => {
+        console.log('Starting Facebook sign in...', {
+            siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+            redirectTo: encodedRedirectTo
+        });
+        
         await supabase.auth.signInWithOAuth({
             provider: "facebook",
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodedRedirectTo}`,
             },
         });
     };

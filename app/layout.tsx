@@ -5,6 +5,7 @@ import { Inter, Rubik } from "next/font/google";
 import { Providers } from "./providers";
 import { inter } from '@/fonts';
 import '@/styles/globals.css';
+import SessionCheck from './components/SessionCheck';
 
 const rubik = Rubik({
     weight: ["400", "500", "600", "700"],
@@ -112,7 +113,10 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${rubik.className} ${inter.variable}`}>
-                <Providers>{children}</Providers>
+                <Providers>
+                    <SessionCheck />
+                    {children}
+                </Providers>
             </body>
         </html>
     );
