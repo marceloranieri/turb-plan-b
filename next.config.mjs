@@ -25,6 +25,11 @@ const nextConfig = {
   },
   output: 'standalone',
   distDir: process.env.BUILD_DIR || '.next',
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, path: false };
+    return config;
+  },
   async headers() {
     return [
       {
