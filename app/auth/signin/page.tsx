@@ -1,3 +1,5 @@
+"use client";
+
 import type { NextPage } from "next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
