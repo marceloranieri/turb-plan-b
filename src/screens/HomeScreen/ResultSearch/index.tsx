@@ -11,9 +11,9 @@ import Icon from "@/components/Icon";
 import NoResultSearch from "@/components/NoResultSearch";
 import styles from "./ResultSearch.module.sass";
 
-import { myFollowers } from "mocks/followers";
-import { posts } from "mocks/posts";
-import { media } from "mocks/media";
+import { myFollowers } from "@/mocks/followers";
+import { posts } from "@/mocks/posts";
+import { media } from "@/mocks/media";
 
 type ResultSearchProps = {
     search: string;

@@ -12,7 +12,7 @@ import NoBookmarks from "./NoBookmarks";
 import styles from "./InnerFolder.module.sass";
 
 import { postsBookmarks } from "@/mocks/posts";
-import { media } from "mocks/media";
+import { media } from "@/mocks/media";
 
 type InnerFolderProps = {
     className?: string;
