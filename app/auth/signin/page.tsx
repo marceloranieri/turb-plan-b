@@ -1,7 +1,7 @@
 "use client";
 
 import type { NextPage } from "next";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -10,7 +10,10 @@ import { Suspense } from "react";
 function SignInContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const supabase = createClientComponentClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     
     // Get the redirectTo parameter (if any)
     const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
