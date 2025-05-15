@@ -30,6 +30,9 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, path: false };
     return config;
   },
+  sassOptions: {
+    includePaths: ['./src/styles'],
+  },
   async headers() {
     return [
       {
@@ -73,7 +76,7 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true,
-    dirs: ['app', 'components', 'screens', 'store', 'lib', 'hooks', 'pages', 'utils'],
+    dirs: ['app', 'components', 'src', 'lib', 'hooks', 'pages', 'utils'],
   },
   typescript: {
     ignoreBuildErrors: true,

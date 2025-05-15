@@ -1,0 +1,29 @@
+// Colors
+$n1: #161616
+$n2: #fff
+$n3: #161616
+$text-primary: rgba(255, 255, 255, 0.9)
+$text-secondary: rgba(255, 255, 255, 0.66)
+
+// Typography
+@mixin title
+  font-weight: 600
+  font-size: 20px
+  line-height: 28px
+
+@mixin base-2r
+  font-size: 15px
+  line-height: 24px
+
+@mixin base-2sm
+  font-weight: 500
+  font-size: 15px
+  line-height: 24px
+
+@mixin caption-r
+  font-size: 13px
+  line-height: 20px
+
+@mixin m
+  @media screen and (max-width: 767px)
+    @content 
