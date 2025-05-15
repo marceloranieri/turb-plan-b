@@ -3,7 +3,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const Entry: NextPage = () => {
+const SignIn: NextPage = () => {
     const router = useRouter();
     const supabase = createClientComponentClient();
 
@@ -30,10 +30,10 @@ const Entry: NextPage = () => {
             <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
                 <div className="text-center">
                     <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                        Welcome to TurfPlan
+                        Sign in to your account
                     </h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        Please sign in to continue
+                        Choose your preferred sign in method
                     </p>
                 </div>
                 <div className="mt-8 space-y-4">
@@ -48,7 +48,7 @@ const Entry: NextPage = () => {
                             height={20}
                             className="mr-2"
                         />
-                        Sign in with Google
+                        Continue with Google
                     </button>
                     <button
                         onClick={handleFacebookSignIn}
@@ -61,7 +61,15 @@ const Entry: NextPage = () => {
                             height={20}
                             className="mr-2"
                         />
-                        Sign in with Facebook
+                        Continue with Facebook
+                    </button>
+                </div>
+                <div className="mt-4 text-center">
+                    <button
+                        onClick={() => router.back()}
+                        className="text-sm text-indigo-600 hover:text-indigo-500"
+                    >
+                        Go back
                     </button>
                 </div>
             </div>
@@ -69,4 +77,4 @@ const Entry: NextPage = () => {
     );
 };
 
-export default Entry;
+export default SignIn;
