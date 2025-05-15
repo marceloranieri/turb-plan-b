@@ -1,7 +1,7 @@
 "use client";
 
 import type { NextPage } from "next";
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Suspense } from "react";
