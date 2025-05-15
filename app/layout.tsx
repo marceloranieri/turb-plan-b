@@ -3,13 +3,8 @@ import { headers } from "next/headers";
 import type { Metadata, Viewport } from "next";
 import { Inter, Rubik } from "next/font/google";
 import { Providers } from "./providers";
-
-const inter = Inter({
-    weight: ["400", "500", "700"],
-    subsets: ["latin"],
-    display: "swap",
-    variable: "--font-inter",
-});
+import { inter } from '@/fonts';
+import '@/styles/globals.css';
 
 const rubik = Rubik({
     weight: ["400", "500", "600", "700"],
@@ -29,7 +24,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${rubik.className} ${inter.variable}`}>
             <head>
                 {/* Description no longer than 155 characters */}
                 <meta
@@ -116,7 +111,7 @@ export default function RootLayout({
                     content="Minimal Social Media UI Design Kit + Prototype + Code"
                 />
             </head>
-            <body className={`${rubik.className} ${inter.className}`}>
+            <body className={`${rubik.className} ${inter.variable}`}>
                 <Providers>{children}</Providers>
             </body>
         </html>
