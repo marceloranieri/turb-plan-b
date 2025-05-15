@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - develop
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,7 +14,12 @@ jobs:
         run: npm install --global vercel@latest
       
       - name: Deploy to Vercel
-        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+          else
+            vercel deploy --token ${{ secrets.VERCEL_TOKEN }} --yes
+          fi
         env:
           # Public Supabase URL (already in vercel.json)
           NEXT_PUBLIC_SUPABASE_URL: "https://vknmgkonzwhqptweemwr.supabase.co"
