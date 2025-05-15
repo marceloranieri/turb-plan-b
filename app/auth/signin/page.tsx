@@ -1,50 +1,65 @@
 "use client";
 
 import type { NextPage } from "next";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-// Create a wrapper component that safely uses useSearchParams
+// Create a client component that uses useSearchParams
 function SignInContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const supabase = createClientComponentClient({
-        cookieOptions: {
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        }
-    });
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     
     // Get the redirectTo parameter or default to dashboard
     const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
-    const encodedRedirectTo = encodeURIComponent(redirectTo);
+
+    useEffect(() => {
+        // Log URL parameters
+        console.log('Sign-in page loaded with params:', Object.fromEntries([...searchParams.entries()]));
+        
+        // Check if user is already authenticated
+        const checkSession = async () => {
+            const { data } = await supabase.auth.getSession();
+            console.log('Current session state:', {
+                hasSession: !!data.session,
+                user: data.session?.user?.email || 'none'
+            });
+        };
+        
+        checkSession();
+    }, [searchParams, supabase.auth]);
 
     const handleGoogleSignIn = async () => {
         console.log('Starting Google sign in...', {
-            siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
-            redirectTo: encodedRedirectTo
+            redirectTo,
+            siteUrl: process.env.NEXT_PUBLIC_SITE_URL
         });
         
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodedRedirectTo}`,
+                redirectTo: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL + 
+                    `?redirectTo=${encodeURIComponent(redirectTo)}`,
             },
         });
     };
 
     const handleFacebookSignIn = async () => {
         console.log('Starting Facebook sign in...', {
-            siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
-            redirectTo: encodedRedirectTo
+            redirectTo,
+            siteUrl: process.env.NEXT_PUBLIC_SITE_URL
         });
         
         await supabase.auth.signInWithOAuth({
             provider: "facebook",
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodedRedirectTo}`,
+                redirectTo: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL + 
+                    `?redirectTo=${encodeURIComponent(redirectTo)}`,
             },
         });
     };
@@ -101,7 +116,7 @@ function SignInContent() {
     );
 }
 
-// Need to import at component level due to Next.js rules
+// Import at component level
 import { useSearchParams } from "next/navigation";
 
 const SignIn: NextPage = () => {
@@ -109,7 +124,7 @@ const SignIn: NextPage = () => {
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                    <h2 className="text-xl">Loading...</h2>
+                    <h2 className="text-xl">Loading sign in options...</h2>
                 </div>
             </div>
         }>
