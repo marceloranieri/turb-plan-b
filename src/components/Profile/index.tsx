@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ScrollMask from "components/ScrollMask";
-import Tabs from "components/Tabs";
-import Post from "components/Post";
+import ScrollMask from "@/components/ScrollMask";
+import Tabs from "@/components/Tabs";
+import Post from "@/components/Post";
 import Image from "@/components/Image";
 import Background from "./Background";
 import Bio from "./Bio";

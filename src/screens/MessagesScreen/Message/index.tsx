@@ -1,7 +1,7 @@
 import Link from "next/link";
 import cn from "classnames";
-import Avatar from "components/Avatar";
-import Icon from "components/Icon";
+import Avatar from "@/components/Avatar";
+import Icon from "@/components/Icon";
 import styles from "./Message.module.sass";
 
 type MessageProps = {

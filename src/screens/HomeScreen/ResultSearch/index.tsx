@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import cn from "classnames";
-import Tabs from "components/Tabs";
-import Follower from "components/Follower";
-import Post from "components/Post";
+import Tabs from "@/components/Tabs";
+import Follower from "@/components/Follower";
+import Post from "@/components/Post";
 import Image from "@/components/Image";
 import ScrollMask from "@/components/ScrollMask";
 import Search from "@/components/Search";
