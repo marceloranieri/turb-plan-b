@@ -2,10 +2,12 @@
 
 import type { NextPage } from "next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Suspense, useState, useEffect } from "react";
 
-const SignIn: NextPage = () => {
+// Create a wrapper component that safely uses useSearchParams
+function SignInContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const supabase = createClientComponentClient({
@@ -16,7 +18,7 @@ const SignIn: NextPage = () => {
     });
     
     // Get the redirectTo parameter or default to dashboard
-    const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+    const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
     const encodedRedirectTo = encodeURIComponent(redirectTo);
 
     const handleGoogleSignIn = async () => {
@@ -96,6 +98,23 @@ const SignIn: NextPage = () => {
                 </div>
             </div>
         </div>
+    );
+}
+
+// Need to import at component level due to Next.js rules
+import { useSearchParams } from "next/navigation";
+
+const SignIn: NextPage = () => {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <h2 className="text-xl">Loading...</h2>
+                </div>
+            </div>
+        }>
+            <SignInContent />
+        </Suspense>
     );
 };
 
