@@ -1,60 +1,58 @@
 "use client";
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import { useRouter } from "next/navigation";
 
 export default function SessionCheck() {
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
-    const pathname = usePathname();
-    const supabase = createClientComponentClient({
-        cookieOptions: {
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        }
-    });
-    
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     useEffect(() => {
         const checkSession = async () => {
             try {
-                console.log('Checking session...', {
-                    path: pathname,
-                    isAuthPage: pathname?.startsWith('/auth')
-                });
-
                 const { data: { session }, error } = await supabase.auth.getSession();
                 
                 if (error) {
-                    console.error('Session check error:', error);
+                    console.error('Error checking session:', error);
+                    router.push('/auth/signin');
                     return;
                 }
 
-                console.log('Session check result:', {
-                    hasSession: !!session,
-                    userId: session?.user?.id,
-                    email: session?.user?.email,
-                    path: pathname
-                });
-                
-                // Don't redirect if we're already on an auth page
-                if (pathname?.startsWith('/auth')) {
-                    console.log('On auth page, skipping redirect');
+                if (!session) {
+                    console.log('No session found, redirecting to sign in');
+                    router.push('/auth/signin');
                     return;
                 }
-                
-                if (!session) {
-                    console.log('No session found, redirecting to signin...');
-                    router.push('/auth/signin');
-                } else {
-                    console.log('Session found, user ID:', session.user.id);
-                }
+
+                console.log('Session found:', {
+                    user: session.user.email,
+                    expiresAt: new Date(session.expires_at! * 1000).toISOString()
+                });
             } catch (error) {
-                console.error('Unexpected error in session check:', error);
+                console.error('Unexpected error checking session:', error);
+                router.push('/auth/signin');
+            } finally {
+                setIsLoading(false);
             }
         };
-        
+
         checkSession();
-    }, [router, supabase, pathname]);
-    
+    }, [router, supabase.auth]);
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-xl">Loading...</h2>
+                </div>
+            </div>
+        );
+    }
+
     return null;
 } 

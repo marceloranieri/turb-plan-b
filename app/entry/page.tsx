@@ -1,74 +1,48 @@
 "use client";
 
-import type { NextPage } from "next";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { createBrowserClient } from "@supabase/ssr";
 
-const Entry: NextPage = () => {
+export default function EntryPage() {
     const router = useRouter();
-    const supabase = createClientComponentClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
-    const handleGoogleSignIn = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-            },
-        });
-    };
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    console.error('Error checking session:', error);
+                    router.push('/auth/signin');
+                    return;
+                }
 
-    const handleFacebookSignIn = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: "facebook",
-            options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-            },
-        });
-    };
+                if (session) {
+                    console.log('Session found, redirecting to dashboard');
+                    router.push('/dashboard');
+                } else {
+                    console.log('No session found, redirecting to sign in');
+                    router.push('/auth/signin');
+                }
+            } catch (error) {
+                console.error('Unexpected error checking session:', error);
+                router.push('/auth/signin');
+            }
+        };
+
+        checkSession();
+    }, [router, supabase.auth]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                        Welcome to TurfPlan
-                    </h2>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Please sign in to continue
-                    </p>
-                </div>
-                <div className="mt-8 space-y-4">
-                    <button
-                        onClick={handleGoogleSignIn}
-                        className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        <Image
-                            src="/images/google.svg"
-                            alt="Google"
-                            width={20}
-                            height={20}
-                            className="mr-2"
-                        />
-                        Sign in with Google
-                    </button>
-                    <button
-                        onClick={handleFacebookSignIn}
-                        className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        <Image
-                            src="/images/facebook.svg"
-                            alt="Facebook"
-                            width={20}
-                            height={20}
-                            className="mr-2"
-                        />
-                        Sign in with Facebook
-                    </button>
-                </div>
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+                <h2 className="text-xl">Loading...</h2>
             </div>
         </div>
     );
-};
-
-export default Entry;
+}
