@@ -4,27 +4,42 @@ import type { NextPage } from "next";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 // Create a client component that uses useSearchParams
 function SignInContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
+    
+    // Use the new client pattern
     const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
-    
-    // Get the redirectTo parameter (if any)
-    const redirectTo = searchParams?.get('redirectTo') || '/dashboard';
+
+    // Check for existing session on load
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data } = await supabase.auth.getSession();
+            if (data.session) {
+                console.log("Active session found, redirecting to dashboard");
+                router.push('/dashboard');
+            }
+        };
+        checkSession();
+    }, []);
 
     const handleGoogleSignIn = async () => {
         console.log('Starting Google sign in...');
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                // Use the configured redirect URL in Supabase
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent'
+                }
             },
         });
     };
