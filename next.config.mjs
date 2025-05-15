@@ -1,8 +1,6 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -36,7 +34,7 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, path: false };
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.join(process.cwd(), 'src'),
     };
     return config;
   },
