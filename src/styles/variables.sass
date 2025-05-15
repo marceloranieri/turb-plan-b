@@ -1,29 +1,131 @@
-// Colors
-$n1: #161616
-$n2: #fff
-$n3: #161616
-$text-primary: rgba(255, 255, 255, 0.9)
-$text-secondary: rgba(255, 255, 255, 0.66)
+// media queries
+=xl
+    @media only screen and (max-width: "1579px")
+        @content
+=w
+    @media only screen and (max-width: "1419px")
+        @content
+=d
+    @media only screen and (max-width: "1259px")
+        @content
+=t
+    @media only screen and (max-width: "1023px")
+        @content
+=m
+    @media only screen and (max-width: "767px")
+        @content
+=s
+    @media only screen and (max-width: "474px")
+        @content
 
-// Typography
-@mixin title
-  font-weight: 600
-  font-size: 20px
-  line-height: 28px
+=r($width)
+    @media only screen and (max-width: $width+ "px")
+        @content
 
-@mixin base-2r
-  font-size: 15px
-  line-height: 24px
+=rmin($width)
+    @media only screen and (min-width: $width+ "px")
+        @content
 
-@mixin base-2sm
-  font-weight: 500
-  font-size: 15px
-  line-height: 24px
+$n1: #ffffff
+$n2: #f8f8f8
+$n3: #282828
+$n4: #121212
 
-@mixin caption-r
-  font-size: 13px
-  line-height: 20px
+$text-primary: rgba($n2, .95)
+$text-secondary: rgba($n2, .70)
+$text-tertiary: rgba($n2, .50)
+$bg-surface: rgba($n3, .7)
 
-@mixin m
-  @media screen and (max-width: 767px)
-    @content 
+=h4
+    font-size: 36px
+    line-height: 1
+    font-weight: 500
+    
+=title
+    font-size: 20px
+    line-height: 1.2
+    font-weight: 500
+
+=base-r
+    font-size: 16px
+    line-height: 1.5
+
+=base-m
+    font-size: 16px
+    line-height: 1.5
+    font-weight: 500
+
+=base-2m
+    font-size: 14px
+    line-height: 1.4
+    font-weight: 500
+
+=base-2r
+    font-size: 14px
+    line-height: 1.4
+
+=base-2sm
+    font-size: 14px
+    line-height: 1.4
+    font-weight: 600
+
+=base-2b
+    font-size: 14px
+    line-height: 1.4
+    font-weight: 700
+
+=caption-r
+    font-size: 12px
+    line-height: 1.33
+
+=caption-sm
+    font-size: 12px
+    line-height: 1.33
+    font-weight: 600
+
+=small
+    font-size: 10px
+    line-height: 1.2
+
+=small-sm
+    font-size: 10px
+    line-height: 1.2
+    font-weight: 600
+
+=body
+    font-family: "Inter", sans-serif
+    letter-spacing: 0.025em
+    font-size: 16px
+    line-height: 1.5
+
+=body-2r
+    font-family: "Inter", sans-serif
+    letter-spacing: 0.025em
+    font-size: 14px
+    line-height: 1.7
+
+=body-2m
+    font-family: "Inter", sans-serif
+    letter-spacing: 0.025em
+    font-size: 14px
+    line-height: 1.7
+    font-weight: 500
+
+=body-2b
+    font-family: "Inter", sans-serif
+    letter-spacing: 0.025em
+    font-size: 14px
+    line-height: 1.7
+    font-weight: 500
+
+=hairline
+    font-family: "Inter", sans-serif
+    letter-spacing: 0.025em
+    font-size: 12px
+    line-height: 1.65
+    font-weight: 500
+
+=gradient-text
+    background-image: linear-gradient(93deg, rgba($n2, .9), rgba($n2, .5))
+    -webkit-background-clip: text
+    -webkit-text-fill-color: transparent

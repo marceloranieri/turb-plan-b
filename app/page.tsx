@@ -1,8 +1,5 @@
-import type { NextPage } from "next";
-import HomeScreen from "@/screens/HomeScreen";
+import HomeScreen from '@/screens/HomeScreen';
 
-const Home: NextPage = () => {
-    return <HomeScreen />;
-};
-
-export default Home;
+export default function Home() {
+  return <HomeScreen />;
+}
