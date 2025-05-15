@@ -1,37 +1,44 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url);
-    // Handle any custom logic you want after authentication
-    // This is optional, as Supabase can handle the redirect directly
-    
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name) {
-                    return cookieStore.get(name)?.value;
+    const code = requestUrl.searchParams.get('code');
+    const redirectTo = requestUrl.searchParams.get('redirectTo') || '/dashboard';
+
+    if (code) {
+        const cookieStore = cookies();
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    get(name: string) {
+                        return cookieStore.get(name)?.value;
+                    },
+                    set(name: string, value: string, options: any) {
+                        cookieStore.set({ name, value, ...options });
+                    },
+                    remove(name: string, options: any) {
+                        cookieStore.set({ name, value: '', ...options });
+                    },
                 },
-                set(name, value, options) {
-                    cookieStore.set({ name, value, ...options });
-                },
-                remove(name, options) {
-                    cookieStore.set({ name, value: '', ...options });
-                },
-            },
+            }
+        );
+
+        try {
+            const { error } = await supabase.auth.exchangeCodeForSession(code);
+            if (error) {
+                console.error('Error exchanging code for session:', error);
+                return NextResponse.redirect(`${requestUrl.origin}/auth/signin?error=${encodeURIComponent(error.message)}`);
+            }
+        } catch (error) {
+            console.error('Unexpected error during auth callback:', error);
+            return NextResponse.redirect(`${requestUrl.origin}/auth/signin?error=An unexpected error occurred`);
         }
-    );
-    
-    // Get the session to confirm authentication worked
-    const { data } = await supabase.auth.getSession();
-    
-    // Log for debugging
-    console.log('Auth callback reached, user authenticated:', !!data.session);
-    
-    // Redirect to dashboard or requested page
-    return NextResponse.redirect(new URL("/dashboard", requestUrl.origin));
+    }
+
+    // URL to redirect to after sign in process completes
+    return NextResponse.redirect(`${requestUrl.origin}${redirectTo}`);
 } 

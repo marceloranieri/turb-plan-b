@@ -24,7 +24,7 @@ function SignInContent() {
             provider: "google",
             options: {
                 // Use the configured redirect URL in Supabase
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}${redirectTo}`
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
             },
         });
     };
@@ -35,7 +35,7 @@ function SignInContent() {
             provider: "facebook",
             options: {
                 // Use the configured redirect URL in Supabase
-                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}${redirectTo}`
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
             },
         });
     };
